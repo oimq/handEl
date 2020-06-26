@@ -12,6 +12,8 @@ for installing and using, requirements are below :
 
 ### Installation
 
+For now, we use Elasticsearch 7.7.
+
 ```code
 pip3 install handEl-master/
 ```
