@@ -6,7 +6,7 @@ from tqdm import tqdm
 pp = pprint.pprint
 
 class handEl :
-    def __init__(self, host='localhost', port='9200', index="default", props=None) :
+    def __init__(self, host='localhost', port=9200, index="default", props=None) :
         self.es = Elasticsearch(host=host, port=port)
         print("Elasticsearch Connection Success [{}:{}]".format(host, port))
         self.ies = IndicesClient(self.es)
@@ -115,6 +115,3 @@ class handEl :
 
     def error(self, e, msg="") :
         print("ERROR {} : {}".format(msg, e))
-
-if __name__ == "__main__" :
-    he = handEl()

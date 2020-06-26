@@ -48,18 +48,51 @@ handEl has several useful functions.
 
 * Script
 ```python3
-he = handEl()
-he.indexing("handel_test")
-he.prope("A", {'alias':['merong', '메롱']}, False, "handel_test")
-he.doc("A");         pp(he.result)
-he.search("메롱");    pp(he.result)
-print(he.tokenize("i you mine want yeah to why put some red shirts"))
+from handEl import handEl
+from pprint import pprint as pp
+
+if __name__ == "__main__" :
+    HOST = 'localhost'
+    PORT = 8080
+
+    INDEX = "test_index"
+    DATA1 = {'alias':['hello', '메롱']}
+    DATA2 = {'alias':['world', '메렁']}
+
+    he = handEl(host=HOST, port=PORT)
+    # Index from the ES
+    he.indexing(INDEX)   
+
+    # Add documents
+    he.prope('A0', DATA1, True)
+    he.prope("A1", DATA2, False)
+    he.doc('A0')
+    pp(he.result)
+    
+    he.search("메롱 좀 하지마!")
+    pp(he.result)
+    he.search("그럼 메렁 해야지~")
+    pp(he.result)
+
+    print(he.tokenize("i might love with you."))
 ```
 * Outputs
 ```python
-{'match_num', 'match_sco', 'match_ids', 'match_res'}
-{'match_num', 'match_sco', 'match_ids', 'match_res'}
-['red', 'shirts']
+Elasticsearch Connection Success [localhost:8080]
+{'alias': ['world', '메렁']}
+{'match_ids': ['A0'],
+ 'match_num': 1,
+ 'match_res': {'alias': ['hello', '메롱']},
+ 'match_sco': 1}
+{'match_ids': ['A0'],
+ 'match_num': 1,
+ 'match_res': [{'alias': ['hello', '메롱']}],
+ 'match_sco': 0.9808291}
+{'match_ids': ['A1'],
+ 'match_num': 1,
+ 'match_res': [{'alias': ['메렁', 'world']}],
+ 'match_sco': 0.4700036}
+['might', 'love']
 ```
 
 ***

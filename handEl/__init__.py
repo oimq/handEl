@@ -1,4 +1,4 @@
-from handEl_repo.handEl import handEl
+from handEl.handEl import handEl
 
 __name__='handEl'
 __version__=2.0
