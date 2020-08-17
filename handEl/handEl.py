@@ -1,21 +1,32 @@
 from elasticsearch import Elasticsearch
 from elasticsearch.client import IndicesClient
 import json
-import pprint
+import requests
+from pprint import pprint as pp
 from tqdm import tqdm
-pp = pprint.pprint
 
 class handEl :
     def __init__(self, host='localhost', port=9200, index="default", props=None) :
-        self.es = Elasticsearch(host=host, port=port)
-        print("Elasticsearch Connection Success [{}:{}]".format(host, port))
-        self.ies = IndicesClient(self.es)
-        self.host = host
-        self.port = port
-        self.index = index
-        self.result = None
-        self.response = None
-        self.props = props
+        if self.connect(host, port) : 
+            print("Elasticsearch Connection Success [{}:{}]".format(host, port))
+            self.es = Elasticsearch(host=host, port=port)
+            self.ies = IndicesClient(self.es)
+            self.host = host
+            self.port = port
+            self.index = index
+            self.result = None
+            self.response = None
+            self.props = props
+        else : pass
+
+    def connect(self, host, port) :
+        try :
+            res = requests.get(url="http://{}:{}".format(host, port))
+            if res.status_code != 200 : raise ConnectionError("Elasticsearch Connection Failed. [{}:{}]".format(host, port))
+            return True
+        except Exception as e :
+            self.error(e, "CONNECT")
+            return False
     
     def __str__(self) :
         return "\nDescriptions for handEl\nhost : {}, port : {}, index : {}\ncurrent result : {}\n" \
@@ -33,6 +44,12 @@ class handEl :
         if self.match(value, field=field, fuzziness=fuzziness) :
                 return self.result
         else :  return None
+
+    def analyze(self :type, value :str, options :list, analyzer="nori_tokenizer") :
+        if not value or not self.index : return []
+        body = {"tokenizer": analyzer, "text": value, "attributes" : options, "explain": True}
+        analies = self.ies.analyze(index=self.index, body=body)
+        return analies['detail']['tokenizer']['tokens']
 
     def tokenize(self, value, tokenizer="natural_tokenizer") :
         if not value : return []
