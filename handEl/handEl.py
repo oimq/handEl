@@ -45,11 +45,11 @@ class handEl :
                 return self.result
         else :  return None
 
-    def analyze(self :type, value :str, options :list, analyzer="nori_tokenizer") :
+    def analyze(self :type, value :str, options :list, analyzer="my_analyzer") :
         if not value or not self.index : return []
-        body = {"tokenizer": analyzer, "text": value, "attributes" : options, "explain": True}
-        analies = self.ies.analyze(index=self.index, body=body)
-        return analies['detail']['tokenizer']['tokens']
+        body = {"analyzer": analyzer, "text": value, "attributes" : options, "explain": True}
+        analies = self.ies.analyze(index=self.index, body=body)['detail']
+        return analies['tokenfilters'][0]['tokens'] if '-f' in options else analies['tokenizer']['tokens']
 
     def tokenize(self, value, tokenizer="natural_tokenizer") :
         if not value : return []
